@@ -13,7 +13,7 @@ class CustomUserManager(UserManager):
         # create the user
         user = self.model(email = email, **extra_fields)
         # for password hashing
-        user.set_password(user)
+        user.set_password(password)
         # save the user in the db
         user.save(using = self.db)
         return user
