@@ -23,3 +23,18 @@ class Post(models.Model):
     def __str__(self):
         return self.title
     
+
+class Rating(models.Model):
+    post=models.ForeignKey(Post, related_name="ratings", on_delete=models.CASCADE)
+    rating=models.IntegerField()
+    overall=models.FloatField(default=0)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        ratings = Rating.objects.filter(post=self.post).values_list('rating', flat=True)
+        overall = sum(ratings) / len(ratings)
+        Rating.objects.filter(post=self.post).update(overall=overall)
+
+    def __str__(self):
+        return f'Rating {self.rating} for {self.post.title}'
+    

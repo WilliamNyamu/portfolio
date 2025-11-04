@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .models import Post
-from .serializers import PostSerializer
+from .models import Post, Rating
+from .serializers import PostSerializer, RatingSerializer
 from rest_framework import generics, permissions
 from django.db.models import F
 from rest_framework.response import Response
@@ -70,3 +70,28 @@ class PostDeleteView(generics.DestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, IsAuthorOrReadOnly]
     lookup_field = 'slug'
     
+
+
+class RatingView(generics.ListAPIView):
+    serializer_class = RatingSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'slug'
+
+    def get_queryset(self):
+        slug = self.kwargs.get('slug')
+        post = Post.objects.get(slug=slug)
+        queryset = Rating.objects.filter(post=post)
+        return queryset
+    
+class RatingCreateView(generics.CreateAPIView):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
+    permission_classes = [permissions.AllowAny]
+    
+    def perform_create(self, serializer):
+        slug = self.kwargs.get('slug')
+        post = Post.objects.get(slug=slug)
+        serializer.save(post=post)
+
+    
+
