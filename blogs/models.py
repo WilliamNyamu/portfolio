@@ -13,7 +13,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    views = models.IntegerField(blank=True, null=True)
+    views = models.IntegerField(blank=True, default=0)
 
     def save(self, *args, **kwargs):
         if not self.slug:
