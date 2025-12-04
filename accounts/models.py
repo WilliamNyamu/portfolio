@@ -18,22 +18,22 @@ class CustomUserManager(UserManager):
         user.save(using = self.db)
         return user
     
-    def create_superuser(self, username, email, password, **extra_fields):
+    def create_superuser(self, email, password, **extra_fields):
         # stamp the superuser file
-        extra_fields.setdefault('is_admin', True)
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
         # validation checks
-        if extra_fields.get('is_admin') is not True:
-            raise ValueError("is_admin should be true")
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError("is_superuser should be true")
         if extra_fields.get('is_staff') is not True:
-            raise ValueError("is staff should be true")
+            raise ValueError("is_staff should be true")
         
         return self.create_user(email, password, **extra_fields)
     
 class CustomUser(AbstractUser):
     """Create a custom user with email as the primary identifier"""
+    username = models.CharField(max_length=150, blank=True, null=True)
     email = models.EmailField(unique=True)
     profile_picture = models.ImageField(upload_to='profile_picture', blank=True, null=True)
     phone_number = models.CharField(max_length=13, blank=True, null=True)
